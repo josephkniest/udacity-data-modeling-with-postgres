@@ -1,2 +1,2 @@
-docker pull ubuntu
+docker pull postgres
 docker build -t sparkify .
