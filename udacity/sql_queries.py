@@ -13,18 +13,11 @@ songplay_table_create = ("""
     songplay_id SERIAL PRIMARY KEY,
     artist_id VARCHAR ( 96 ),
     FOREIGN KEY (artist_id) REFERENCES artists (artist_id),
-    auth VARCHAR ( 16 ),
-    itemInSession INT NOT NULL,
-    length FLOAT ( 24 ),
     level VARCHAR ( 64 ),
     location VARCHAR ( 64 ),
-    method VARCHAR ( 8 ),
-    page VARCHAR ( 16 ),
-    registration FLOAT ( 24 ),
     session_id INT NOT NULL,
     song_id VARCHAR ( 96 ),
     FOREIGN KEY (song_id) REFERENCES songs (song_id),
-    status INT NOT NULL,
     start_time BIGINT,
     user_agent VARCHAR ( 512 ),
     user_id VARCHAR ( 96 ),
@@ -78,19 +71,29 @@ time_table_create = ("""
 # INSERT RECORDS
 
 songplay_table_insert = ("""
+  INSERT INTO songplays (songplay_id, artist_id, level, location, session_id, song_id, start_time, user_agent, user_id)
+  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
 """)
 
 user_table_insert = ("""
+  INSERT INTO users (user_id, first_name, last_name, gender, level)
+  VALUES (%s, %s, %s, %s, %s)
 """)
 
 song_table_insert = ("""
+  INSERT INTO songs (song_id, artist_id, title, duration, year)
+  VALUES (%s, %s, %s, %s, %s)
 """)
 
 artist_table_insert = ("""
+  INSERT INTO artists (artist_id, name, location, latitude, longitude)
+  VALUES (%s, %s, %s, %s, %s)
 """)
 
 
 time_table_insert = ("""
+  INSERT INTO time (start_time, hour, day, week, month, year, weekday)
+  VALUES (%s, %s, %s, %s, %s)
 """)
 
 # FIND SONGS

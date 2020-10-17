@@ -1,43 +1,52 @@
 import os
 import glob
 import psycopg2
-import pandas as pd
+import json
 from sql_queries import *
 
 
 def process_song_file(cur, filepath):
     # open song file
-    df = 
+    df = open(filepath, "r")
 
     # insert song record
-    song_data = 
-    cur.execute(song_table_insert, song_data)
-    
+    content = df.read()
+    song_data = json.loads(content)
+    df.close()
+
     # insert artist record
-    artist_data = 
-    cur.execute(artist_table_insert, artist_data)
+    cur.execute(
+      artist_table_insert,
+      (song_data["artist_id"], song_data["artist_name"], song_data["artist_location"], song_data["artist_latitude"], song_data["artist_longitude"])
+    )
+
+    cur.execute(
+      song_table_insert, 
+      (song_data["song_id"], song_data["artist_id"], song_data["title"], song_data["duration"], song_data["year"])
+    )
+    
 
 
 def process_log_file(cur, filepath):
     # open log file
-    df = 
+    df = 0
 
     # filter by NextSong action
-    df = 
+    df = 0
 
     # convert timestamp column to datetime
-    t = 
+    t = 0
     
     # insert time data records
-    time_data = 
-    column_labels = 
-    time_df = 
+    time_data = 0
+    column_labels = 0
+    time_df = 0
 
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
 
     # load user table
-    user_df = 
+    user_df = 0
 
     # insert user records
     for i, row in user_df.iterrows():
@@ -56,7 +65,7 @@ def process_log_file(cur, filepath):
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = 
+        songplay_data = 0
         cur.execute(songplay_table_insert, songplay_data)
 
 
@@ -80,14 +89,15 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
-    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
+    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=postgres password=postgres")
     cur = conn.cursor()
 
     process_data(cur, conn, filepath='data/song_data', func=process_song_file)
-    process_data(cur, conn, filepath='data/log_data', func=process_log_file)
+    #process_data(cur, conn, filepath='data/log_data', func=process_log_file)
 
     conn.close()
 
 
 if __name__ == "__main__":
     main()
+

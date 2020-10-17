@@ -1,0 +1,10 @@
+# Sparkify song play aggregation
+
+Sparkify currently stores song play instance data in log form in a series of json files on disc.
+This instrumentation loads the song play records as well as the song records themselves (also in
+json format on disc to begin with) into a postgres star schema
+
+## Postgres
+
+Both the default database name and postgres root user name are "postgres" instead of "student",
+when attempting to compose testing utilities for the etl scripting this will need to be considered.
