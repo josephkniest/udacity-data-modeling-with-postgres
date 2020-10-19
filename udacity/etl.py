@@ -14,15 +14,33 @@ def process_song_file(cur, filepath):
     song_data = json.loads(content)
     df.close()
 
-    # insert artist record
-    cur.execute(
-      artist_table_insert,
-      (song_data["artist_id"], song_data["artist_name"], song_data["artist_location"], song_data["artist_latitude"], song_data["artist_longitude"])
-    )
+    cur.execute("SELECT * FROM artists WHERE artist_id = '" + song_data["artist_id"] + "'")
+    record = 0
+    for rec in cur:
+        record = rec
+
+    # insert/update artist record
+    if(record == 0):
+        print('insert')
+        cur.execute(
+            artist_table_insert,
+            (song_data["artist_id"], song_data["artist_name"], song_data["artist_location"], song_data["artist_latitude"], song_data["artist_longitude"])
+        )
+    else :
+        print('update')
+        print(song_data)
+        song_data["artist_name"] = song_data["artist_name"] if record[1] == None else record[1]
+        song_data["artist_location"] = song_data["artist_location"] if record[2] == None else record[2]
+        song_data["artist_latitude"] = song_data["artist_latitude"] if record[3] == None else record[3]
+        song_data["artist_longitude"] = song_data["artist_longitude"] if record[4] == None else record[4]
+        cur.execute(
+            artist_table_update,
+            (song_data["artist_name"], song_data["artist_location"], song_data["artist_latitude"], song_data["artist_longitude"], song_data["artist_id"])
+        )
 
     cur.execute(
-      song_table_insert, 
-      (song_data["song_id"], song_data["artist_id"], song_data["title"], song_data["duration"], song_data["year"])
+        song_table_insert, 
+        (song_data["song_id"], song_data["artist_id"], song_data["title"], song_data["duration"], song_data["year"])
     )
     
 

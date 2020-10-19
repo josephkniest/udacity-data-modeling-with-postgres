@@ -12,16 +12,13 @@ songplay_table_create = ("""
   CREATE TABLE IF NOT EXISTS songplays (
     songplay_id SERIAL PRIMARY KEY,
     artist_id VARCHAR ( 96 ),
-    FOREIGN KEY (artist_id) REFERENCES artists (artist_id),
     level VARCHAR ( 64 ),
     location VARCHAR ( 64 ),
     session_id INT NOT NULL,
     song_id VARCHAR ( 96 ),
-    FOREIGN KEY (song_id) REFERENCES songs (song_id),
     start_time BIGINT,
     user_agent VARCHAR ( 512 ),
-    user_id VARCHAR ( 96 ),
-    FOREIGN KEY (user_id) REFERENCES users (user_id)
+    user_id VARCHAR ( 96 )
   )
 """)
 
@@ -39,7 +36,6 @@ song_table_create = ("""
   CREATE TABLE IF NOT EXISTS songs (
     song_id VARCHAR ( 96 ) PRIMARY KEY,
     artist_id VARCHAR ( 96 ),
-    FOREIGN KEY (artist_id) REFERENCES artists (artist_id),
     title VARCHAR ( 128 ),
     duration FLOAT ( 24 ),
     year INT
@@ -76,20 +72,28 @@ songplay_table_insert = ("""
 """)
 
 user_table_insert = ("""
-  INSERT INTO users (user_id, first_name, last_name, gender, level)
+  INSERT INTO users (user_id, first_name, last_name, gender, level) 
   VALUES (%s, %s, %s, %s, %s)
 """)
 
 song_table_insert = ("""
-  INSERT INTO songs (song_id, artist_id, title, duration, year)
+  INSERT INTO songs (song_id, artist_id, title, duration, year) 
   VALUES (%s, %s, %s, %s, %s)
 """)
 
 artist_table_insert = ("""
-  INSERT INTO artists (artist_id, name, location, latitude, longitude)
+  INSERT INTO artists (artist_id, name, location, latitude, longitude) 
   VALUES (%s, %s, %s, %s, %s)
 """)
 
+artist_table_update = ("""
+  UPDATE artists SET 
+    name = %s,
+    location = %s,
+    latitude = %s,
+    longitude = %s
+  WHERE artist_id = %s 
+""")
 
 time_table_insert = ("""
   INSERT INTO time (start_time, hour, day, week, month, year, weekday)
