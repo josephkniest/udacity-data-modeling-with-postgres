@@ -9,6 +9,8 @@ json format on disc to begin with) into a postgres star schema
 Both the default database name and postgres root user name are "postgres" instead of "student",
 when attempting to compose testing utilities for the etl scripting this will need to be considered.
 
+Connect thereto with ```psql postgresql://postgres:postgres@127.0.0.1/sparkifydb```
+
 ## ETL
 
 The ETL process itself reads files off disc and loads them into the "sparkifydb" database within
@@ -20,3 +22,9 @@ For song data, the ETL extracts both the artist's information and the song's inf
 them as records into postgres. Upon inspection of the data, artists can author many songs but sometimes
 they are listed with missing info, so the etl fills in those missing attributes as best it can from
 recurrences in the same record
+
+## Constructing postgres database
+
+1) Lay down the schema with ```python(|3) create_tables.py```
+
+2) Insert data with ```python(|3) etl.py```

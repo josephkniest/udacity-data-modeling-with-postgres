@@ -21,14 +21,11 @@ def process_song_file(cur, filepath):
 
     # insert/update artist record
     if(record == 0):
-        print('insert')
         cur.execute(
             artist_table_insert,
             (song_data["artist_id"], song_data["artist_name"], song_data["artist_location"], song_data["artist_latitude"], song_data["artist_longitude"])
         )
     else :
-        print('update')
-        print(song_data)
         song_data["artist_name"] = song_data["artist_name"] if record[1] == None else record[1]
         song_data["artist_location"] = song_data["artist_location"] if record[2] == None else record[2]
         song_data["artist_latitude"] = song_data["artist_latitude"] if record[3] == None else record[3]
@@ -45,47 +42,43 @@ def process_song_file(cur, filepath):
     
 
 
+def add_or_update_user(cur, record):
+    # query user
+    user_id = record["userId"]
+    cur.execute("SELECT * FROM users WHERE user_id = '" + user_id + "'")
+    user = cur.fetchone()
+
+    if user:
+        record["firstName"] = record["firstName"] if user[1] == None else user[1]
+        record["lastName"] = record["lastName"] if user[2] == None else user[2]
+        record["gender"] = record["gender"] if user[3] == None else user[3]
+        record["level"] = record["level"] if user[4] == None else user[4]
+        cur.execute(
+            user_table_update,
+            (record["firstName"], record["lastName"], record["gender"], record["level"], record["userId"])
+        )
+    else :
+        cur.execute(
+            user_table_insert,
+            (record["userId"], record["firstName"], record["lastName"], record["gender"], record["level"])
+        )
+
 def process_log_file(cur, filepath):
     # open log file
-    df = 0
+    file = open(filepath, "r")
 
-    # filter by NextSong action
-    df = 0
+    # load log file content into memory
+    content = file.read()
 
-    # convert timestamp column to datetime
-    t = 0
-    
-    # insert time data records
-    time_data = 0
-    column_labels = 0
-    time_df = 0
+    # close filedescriptor
+    file.close()
 
-    for i, row in time_df.iterrows():
-        cur.execute(time_table_insert, list(row))
+    logs = content.split("\n")
+    for log in logs:
+        record = json.loads(log)
 
-    # load user table
-    user_df = 0
-
-    # insert user records
-    for i, row in user_df.iterrows():
-        cur.execute(user_table_insert, row)
-
-    # insert songplay records
-    for index, row in df.iterrows():
-        
-        # get songid and artistid from song and artist tables
-        cur.execute(song_select, (row.song, row.artist, row.length))
-        results = cur.fetchone()
-        
-        if results:
-            songid, artistid = results
-        else:
-            songid, artistid = None, None
-
-        # insert songplay record
-        songplay_data = 0
-        cur.execute(songplay_table_insert, songplay_data)
-
+        # insert/update user
+        add_or_update_user(cur, record)
 
 def process_data(cur, conn, filepath, func):
     # get all files matching extension from directory
@@ -110,8 +103,8 @@ def main():
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=postgres password=postgres")
     cur = conn.cursor()
 
-    process_data(cur, conn, filepath='data/song_data', func=process_song_file)
-    #process_data(cur, conn, filepath='data/log_data', func=process_log_file)
+    #process_data(cur, conn, filepath='data/song_data', func=process_song_file)
+    process_data(cur, conn, filepath='data/log_data', func=process_log_file)
 
     conn.close()
 

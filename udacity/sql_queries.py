@@ -1,4 +1,4 @@
-# DROP TABLES
+ DROP TABLES
 
 songplay_table_drop = "DROP TABLE IF EXISTS songplays"
 user_table_drop = "DROP TABLE IF EXISTS users "
@@ -27,7 +27,7 @@ user_table_create = ("""
     user_id VARCHAR ( 96 ) PRIMARY KEY,
     first_name VARCHAR ( 32 ),
     last_name VARCHAR ( 32 ),
-    gender VARCHAR ( 1 ) NOT NULL,
+    gender VARCHAR ( 1 ),
     level VARCHAR ( 64 )
   )
 """)
@@ -76,6 +76,15 @@ user_table_insert = ("""
   VALUES (%s, %s, %s, %s, %s)
 """)
 
+user_table_update = ("""
+  UPDATE users SET
+    first_name = %s,
+    last_name = %s,
+    gender = %s,
+    level = %s
+  WHERE user_id = %s
+""")
+
 song_table_insert = ("""
   INSERT INTO songs (song_id, artist_id, title, duration, year) 
   VALUES (%s, %s, %s, %s, %s)
@@ -109,4 +118,5 @@ song_select = ("""
 
 create_table_queries = [time_table_create, user_table_create, artist_table_create, song_table_create, songplay_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
+
 

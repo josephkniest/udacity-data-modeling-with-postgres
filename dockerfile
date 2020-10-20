@@ -34,4 +34,6 @@ RUN sudo apt-get install -y jupyter
 
 # Install some GNU essentials into image
 
-RUN sudo apt-get install nano
+RUN sudo apt-get install -y nano
+
+RUN sudo apt-get install -y rg
