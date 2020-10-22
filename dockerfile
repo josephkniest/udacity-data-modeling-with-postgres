@@ -36,4 +36,3 @@ RUN sudo apt-get install -y jupyter
 
 RUN sudo apt-get install -y nano
 
-RUN sudo apt-get install -y rg

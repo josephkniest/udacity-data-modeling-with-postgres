@@ -1,4 +1,4 @@
- DROP TABLES
+# DROP TABLES
 
 songplay_table_drop = "DROP TABLE IF EXISTS songplays"
 user_table_drop = "DROP TABLE IF EXISTS users "
@@ -14,7 +14,7 @@ songplay_table_create = ("""
     artist_id VARCHAR ( 96 ),
     level VARCHAR ( 64 ),
     location VARCHAR ( 64 ),
-    session_id INT NOT NULL,
+    session_id INT,
     song_id VARCHAR ( 96 ),
     start_time BIGINT,
     user_agent VARCHAR ( 512 ),
@@ -60,15 +60,15 @@ time_table_create = ("""
     week INT,
     month INT,
     year INT,
-    weekday INT
+    weekday VARCHAR ( 10 )
   )
 """)
 
 # INSERT RECORDS
 
 songplay_table_insert = ("""
-  INSERT INTO songplays (songplay_id, artist_id, level, location, session_id, song_id, start_time, user_agent, user_id)
-  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+  INSERT INTO songplays (artist_id, level, location, session_id, song_id, start_time, user_agent, user_id)
+  VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
 """)
 
 user_table_insert = ("""
@@ -106,12 +106,7 @@ artist_table_update = ("""
 
 time_table_insert = ("""
   INSERT INTO time (start_time, hour, day, week, month, year, weekday)
-  VALUES (%s, %s, %s, %s, %s)
-""")
-
-# FIND SONGS
-
-song_select = ("""
+  VALUES (%s, %s, %s, %s, %s, %s, %s)
 """)
 
 # QUERY LISTS
