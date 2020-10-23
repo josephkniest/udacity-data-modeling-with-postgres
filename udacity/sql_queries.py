@@ -25,8 +25,8 @@ songplay_table_create = ("""
 user_table_create = ("""
   CREATE TABLE IF NOT EXISTS users (
     user_id VARCHAR ( 96 ) PRIMARY KEY,
-    first_name VARCHAR ( 32 ),
-    last_name VARCHAR ( 32 ),
+    first_name VARCHAR ( 32 ) NOT NULL,
+    last_name VARCHAR ( 32 ) NOT NULL,
     gender VARCHAR ( 1 ),
     level VARCHAR ( 64 )
   )
@@ -54,13 +54,14 @@ artist_table_create = ("""
 
 time_table_create = ("""
   CREATE TABLE IF NOT EXISTS time (
-    start_time BIGINT,
-    hour INT,
-    day INT,
-    week INT,
-    month INT,
-    year INT,
-    weekday VARCHAR ( 10 )
+    time_id SERIAL PRIMARY KEY,
+    start_time BIGINT NOT NULL,
+    hour INT NOT NULL,
+    day INT NOT NULL,
+    week INT NOT NULL,
+    month INT NOT NULL,
+    year INT NOT NULL,
+    weekday VARCHAR ( 10 ) NOT NULL
   )
 """)
 

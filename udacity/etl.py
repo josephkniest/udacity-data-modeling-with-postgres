@@ -38,10 +38,9 @@ def process_song_file(cur, filepath):
         )
 
     cur.execute(
-        song_table_insert, 
+        song_table_insert,
         (song_data["song_id"], song_data["artist_id"], song_data["title"], song_data["duration"], song_data["year"])
     )
-    
 
 
 def add_or_update_user(cur, record):
@@ -59,7 +58,7 @@ def add_or_update_user(cur, record):
             user_table_update,
             (record["firstName"], record["lastName"], record["gender"], record["level"], record["userId"])
         )
-    else :
+    elif record["firstName"] is not None and record["lastName"] is not None:
         cur.execute(
             user_table_insert,
             (record["userId"], record["firstName"], record["lastName"], record["gender"], record["level"])
@@ -69,11 +68,7 @@ def add_or_update_user(cur, record):
 dayOfTheWeek = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 def insert_songplay(cur, record):
-    # For some reason the rubric expects a "time" table to contain a
-    # numerical breakdown of each time unit as to when a song was played
-    # This is presumably the "ts" milliseconds property in the json.
-    # The ts fields appear to be milliseconds since the unix epoch (1/1/1970)
-    # We insert it here:
+
     dt = datetime.datetime.fromtimestamp(record["ts"] / 1000.0)
     cur.execute(time_table_insert, (record["ts"], dt.hour, dt.day, dt.isocalendar()[1], dt.month, dt.year, dayOfTheWeek[dt.weekday()]))
 
@@ -88,6 +83,9 @@ def insert_songplay(cur, record):
     # If there is no known song in the song dataset don't
     # insert a fact (songplay) into the fact table as a
     # songless songplay is pretty useless
+    song_id = None
+    artist_id = None
+    user_id = None
     if song is not None:
         song_id = song[0]
         artist_id = song[1]
@@ -98,19 +96,15 @@ def insert_songplay(cur, record):
         for rec in cur:
             user = rec
 
-        if user is not None:
-            user_id = user[0]
-            # It is possible to fill in all columns belonging to the songplay table, however
-            # according to the udacity grading rubric, all columns besdies "artist_id" and "song_id"
-            # are supposed to be "None" For reference the entire insertion array could be:
-            # (artist_id, record["level"], record["location"], record["sessionId"], song_id, record["ts"], record["userAgent"], user_id)
+        user_id = None if user is None else user[0]
 
-            # It is also worth noting that the rubric expects there to only be one record in the songsplay table. In fact there
-            # are actually three instances of a different user listening to the same song (Intro, 2003)
-            cur.execute(
-              songplay_table_insert,
-              (artist_id, None, None, None, song_id, None, None, None)
-            )
+    if user_id is not None:
+        print(user_id)
+
+    cur.execute(
+      songplay_table_insert,
+      (artist_id, record["level"], record["location"], record["sessionId"], song_id, record["ts"], record["userAgent"], user_id)
+    )
 
 def process_log_file(cur, filepath):
     # open log file
