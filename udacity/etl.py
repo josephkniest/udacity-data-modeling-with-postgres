@@ -8,6 +8,18 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+
+    """process_song_file
+
+    Process a track json file by extracting the song and artist and inserting
+    them into their respective postgres tables
+
+    Parameters:
+    cur (cursor): Database cursor
+    filepath (string): Full path to the file in question
+
+    """
+
     # open song file
     df = open(filepath, "r")
 
@@ -44,6 +56,18 @@ def process_song_file(cur, filepath):
 
 
 def add_or_update_user(cur, record):
+
+    """add_or_update_user
+
+    Process an event json file by extracting the user and inserting
+    them into the user postgres tables
+
+    Parameters:
+    cur (cursor): Database cursor
+    filepath (dictionary): Parsed json file as a record
+
+    """
+
     # query user
     user_id = record["userId"]
     cur.execute("SELECT * FROM users WHERE user_id = '" + user_id + "'")
@@ -68,6 +92,17 @@ def add_or_update_user(cur, record):
 dayOfTheWeek = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 def insert_songplay(cur, record):
+
+    """insert_songplay
+
+    Process an event json file by inserting the event as a songplay
+    Attempts to find the song, artist and user id of the songplay
+
+    Parameters:
+    cur (cursor): Database cursor
+    filepath (dictionary): Parsed json file as a record
+
+    """
 
     dt = datetime.datetime.fromtimestamp(record["ts"] / 1000.0)
     cur.execute(time_table_insert, (record["ts"], dt.hour, dt.day, dt.isocalendar()[1], dt.month, dt.year, dayOfTheWeek[dt.weekday()]))
@@ -98,15 +133,23 @@ def insert_songplay(cur, record):
 
         user_id = None if user is None else user[0]
 
-    if user_id is not None:
-        print(user_id)
-
     cur.execute(
       songplay_table_insert,
       (artist_id, record["level"], record["location"], record["sessionId"], song_id, record["ts"], record["userAgent"], user_id)
     )
 
 def process_log_file(cur, filepath):
+
+    """process_log_file
+
+    Process an event json file by extracting and inserting song users, songplays and time
+
+    Parameters:
+    cur (cursor): Database cursor
+    filepath (string): Full path to the file in question
+
+    """
+
     # open log file
     file = open(filepath, "r")
 
@@ -126,6 +169,20 @@ def process_log_file(cur, filepath):
         insert_songplay(cur, record)
 
 def process_data(cur, conn, filepath, func):
+
+    """process_data
+
+    Process all event json files and track files and insert the
+    data gleaned therein into their respective postgres tables
+
+    Parameters:
+    cur (cursor): Database cursor
+    conn : Database connection
+    filepath (string): Full path to the song or event data sub dir
+    func: Process data function
+
+    """
+
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
