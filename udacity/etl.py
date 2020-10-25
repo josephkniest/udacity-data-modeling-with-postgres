@@ -55,9 +55,9 @@ def process_song_file(cur, filepath):
     )
 
 
-def add_or_update_user(cur, record):
+def insert_user(cur, record):
 
-    """add_or_update_user
+    """insert_user
 
     Process an event json file by extracting the user and inserting
     them into the user postgres tables
@@ -67,22 +67,7 @@ def add_or_update_user(cur, record):
     filepath (dictionary): Parsed json file as a record
 
     """
-
-    # query user
-    user_id = record["userId"]
-    cur.execute("SELECT * FROM users WHERE user_id = '" + user_id + "'")
-    user = cur.fetchone()
-
-    if user:
-        record["firstName"] = record["firstName"] if user[1] == None else user[1]
-        record["lastName"] = record["lastName"] if user[2] == None else user[2]
-        record["gender"] = record["gender"] if user[3] == None else user[3]
-        record["level"] = record["level"] if user[4] == None else user[4]
-        cur.execute(
-            user_table_update,
-            (record["firstName"], record["lastName"], record["gender"], record["level"], record["userId"])
-        )
-    elif record["firstName"] is not None and record["lastName"] is not None:
+    if record["firstName"] is not None and record["lastName"] is not None:
         cur.execute(
             user_table_insert,
             (record["userId"], record["firstName"], record["lastName"], record["gender"], record["level"])
@@ -164,7 +149,7 @@ def process_log_file(cur, filepath):
         record = json.loads(log)
 
         # insert/update user
-        add_or_update_user(cur, record)
+        insert_user(cur, record)
         # insert song plays
         insert_songplay(cur, record)
 

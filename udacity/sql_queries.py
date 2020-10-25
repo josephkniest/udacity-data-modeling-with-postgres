@@ -12,13 +12,16 @@ songplay_table_create = ("""
   CREATE TABLE IF NOT EXISTS songplays (
     songplay_id SERIAL PRIMARY KEY,
     artist_id VARCHAR ( 96 ),
+    FOREIGN KEY(artist_id) REFERENCES artists(artist_id),
     level VARCHAR ( 64 ),
     location VARCHAR ( 64 ),
     session_id INT,
     song_id VARCHAR ( 96 ),
+    FOREIGN KEY(song_id) REFERENCES songs(song_id),
     start_time BIGINT,
     user_agent VARCHAR ( 512 ),
-    user_id VARCHAR ( 96 )
+    user_id VARCHAR ( 96 ),
+    FOREIGN KEY(user_id) REFERENCES users(user_id)
   )
 """)
 
@@ -75,6 +78,7 @@ songplay_table_insert = ("""
 user_table_insert = ("""
   INSERT INTO users (user_id, first_name, last_name, gender, level) 
   VALUES (%s, %s, %s, %s, %s)
+  ON CONFLICT (user_id) DO UPDATE SET level = EXCLUDED.level
 """)
 
 user_table_update = ("""
