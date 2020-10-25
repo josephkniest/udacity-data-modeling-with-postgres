@@ -81,15 +81,6 @@ user_table_insert = ("""
   ON CONFLICT (user_id) DO UPDATE SET level = EXCLUDED.level
 """)
 
-user_table_update = ("""
-  UPDATE users SET
-    first_name = %s,
-    last_name = %s,
-    gender = %s,
-    level = %s
-  WHERE user_id = %s
-""")
-
 song_table_insert = ("""
   INSERT INTO songs (song_id, artist_id, title, duration, year) 
   VALUES (%s, %s, %s, %s, %s)
@@ -98,15 +89,7 @@ song_table_insert = ("""
 artist_table_insert = ("""
   INSERT INTO artists (artist_id, name, location, latitude, longitude) 
   VALUES (%s, %s, %s, %s, %s)
-""")
-
-artist_table_update = ("""
-  UPDATE artists SET 
-    name = %s,
-    location = %s,
-    latitude = %s,
-    longitude = %s
-  WHERE artist_id = %s 
+  ON CONFLICT (artist_id) DO NOTHING
 """)
 
 time_table_insert = ("""
